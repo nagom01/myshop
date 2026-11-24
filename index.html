@@ -2,11 +2,15 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>올인원 파트너스 쇼핑</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>올인원 파트너스 쇼핑 | 핫딜 & 인기템 큐레이션</title>
+
+  <!-- 파비콘 및 스마트폰 앱 바로가기 아이콘 설정 -->
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081559.png">
-  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081559.png">
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" type="image/png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="파트너스쇼핑">
 
   <style>
     :root {
@@ -15,124 +19,427 @@
       --text: #0f172a;
       --muted: #64748b;
       --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eff6ff;
       --border: #e2e8f0;
       --hot: #ef4444;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif; background: var(--bg); color: var(--text); padding-bottom: 70px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 70px;
+    }
     .wrap { max-width: 1100px; margin: 0 auto; padding: 12px 14px; }
 
-    /* 상단 헤더 & 바로가기 버튼 */
-    .top-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 16px; }
-    .logo-area h1 { font-size: 19px; font-weight: 900; letter-spacing: -0.5px; }
-    .bookmark-btn {
-      background: #fff; border: 1px solid var(--border); border-radius: 20px;
-      padding: 6px 12px; font-size: 12px; font-weight: 700; color: var(--primary);
-      cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    /* ================= 1. 리뉴얼된 상단 헤더 ================= */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 4px 18px;
+    }
+    .brand-link {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    }
+    .brand-text h1 {
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -0.6px;
+      background: linear-gradient(90deg, #0f172a 0%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+    .brand-text p {
+      font-size: 11.5px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 2px;
     }
 
-    /* 상단 7개 카테고리 탭 (가로 스크롤) */
+    /* 즐겨찾기/바로가기 버튼 */
+    .btn-favorite {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 7px 13px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+    .btn-favorite:hover {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* ================= 2. 카테고리 네비게이션 ================= */
     .cat-nav {
-      position: sticky; top: 0; z-index: 40; background: rgba(248,250,252,0.95);
-      backdrop-filter: blur(8px); padding: 6px 0 10px; margin-bottom: 12px;
-      display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(248, 250, 252, 0.95);
+      backdrop-filter: blur(8px);
+      padding: 6px 0 12px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
     .cat-nav::-webkit-scrollbar { display: none; }
     .cat-chip {
-      white-space: nowrap; padding: 7px 15px; border-radius: 24px;
-      border: 1px solid var(--border); background: #fff; font-size: 13px;
-      font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s;
+      white-space: nowrap;
+      padding: 7px 15px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
-    .cat-chip.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .cat-chip.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+    }
 
-    /* 섹션 레이아웃 */
-    .section-wrap { margin-bottom: 32px; scroll-margin-top: 60px; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 2px; }
-    .section-title { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+    /* ================= 3. 섹션 & 카드 그리드 ================= */
+    .section-wrap { margin-bottom: 34px; scroll-margin-top: 60px; }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 2px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .btn-more {
-      font-size: 12px; font-weight: 700; color: var(--muted); background: none;
-      border: 0; cursor: pointer; padding: 4px 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 4px 6px;
     }
 
-    /* 반응형 카드 그리드: PC 4단 / 모바일 2단 */
+    /* 반응형 정렬: PC 4단 / 모바일 2단 */
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr); /* 모바일 2단 */
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
     @media (min-width: 768px) {
       .card-grid {
-        grid-template-columns: repeat(4, 1fr); /* PC 4단 */
+        grid-template-columns: repeat(4, 1fr);
         gap: 16px;
       }
     }
 
-    /* 카드 스타일 (순서: 미디어 - 날짜 - 제목 - 번호 - 버튼) */
+    /* 카드 스타일 (순서: 미디어 -> 날짜 -> 제목 -> 번호 -> 바로가기) */
     .card {
-      background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border);
-      overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      background: var(--card-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }
     .media-box {
-      width: 100%; aspect-ratio: 1 / 1; background: #e2e8f0; position: relative; overflow: hidden;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #f1f5f9;
+      position: relative;
+      overflow: hidden;
       cursor: pointer;
     }
-    .media-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .media-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.2s;
+    }
+    .media-box img:hover { transform: scale(1.03); }
     .media-box iframe { width: 100%; height: 100%; border: 0; }
     
-    .card-body { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; }
-    .card-date { font-size: 11px; color: #94a3b8; font-weight: 500; margin-bottom: 3px; }
+    .card-zoom-hint {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: rgba(15, 23, 42, 0.7);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 6px;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-body { padding: 11px; display: flex; flex-direction: column; flex-grow: 1; }
+    .card-date { font-size: 11px; color: #94a3b8; font-weight: 600; margin-bottom: 4px; }
     .card-title {
-      font-size: 13.5px; font-weight: 700; line-height: 1.35; margin-bottom: 6px;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
       min-height: 36px;
+      color: #1e293b;
     }
     .card-id { font-size: 11px; color: #cbd5e1; font-weight: 600; margin-bottom: 10px; margin-top: auto; }
     
     .btn-action {
-      display: block; width: 100%; padding: 9px 0; background: var(--primary);
-      color: #fff; text-align: center; font-size: 13px; font-weight: 700;
-      border-radius: 8px; text-decoration: none; border: 0; cursor: pointer;
+      display: block;
+      width: 100%;
+      padding: 9px 0;
+      background: var(--primary);
+      color: #ffffff;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 9px;
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+      transition: background 0.15s;
     }
+    .btn-action:hover { background: var(--primary-dark); }
 
-    /* 카드뉴스 모달 & CPA 모달 공통 */
+    /* ================= 4. 카드뉴스 슬라이더 모달 ================= */
     .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65);
-      z-index: 100; align-items: center; justify-content: center; padding: 16px;
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(4px);
     }
     .modal-overlay.open { display: flex; }
     .modal-content {
-      background: #fff; width: 100%; max-width: 440px; border-radius: 16px;
-      overflow: hidden; max-height: 90vh; display: flex; flex-direction: column;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); animation: popUp 0.2s ease-out;
+      background: #ffffff;
+      width: 100%;
+      max-width: 440px;
+      border-radius: 18px;
+      overflow: hidden;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+      animation: popUp 0.2s ease-out;
+      position: relative;
     }
     @keyframes popUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .modal-body { padding: 16px; overflow-y: auto; }
-    .modal-img { width: 100%; max-height: 280px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; }
-    .modal-title { font-size: 16px; font-weight: 800; line-height: 1.4; margin-bottom: 8px; }
-    .modal-desc { font-size: 13.5px; color: #334155; line-height: 1.6; white-space: pre-wrap; margin-bottom: 16px; }
-    .modal-footer { padding: 12px 16px; background: #f8fafc; border-top: 1px solid var(--border); display: flex; gap: 8px; }
-    .btn-close { flex: 1; padding: 11px; border: 1px solid var(--border); background: #fff; border-radius: 8px; font-weight: 700; cursor: pointer; }
-    .btn-submit { flex: 2; padding: 11px; background: var(--primary); color: #fff; border-radius: 8px; font-weight: 700; text-align: center; text-decoration: none; border: 0; cursor: pointer; }
+
+    /* 슬라이더 뷰포트 */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      background: #0f172a;
+    }
+    .slider-track {
+      display: flex;
+      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      width: 100%;
+    }
+    .slide-item {
+      min-width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+    }
+    .slide-img {
+      width: 100%;
+      height: 320px;
+      object-fit: contain;
+      background: #f8fafc;
+    }
+    .slide-text-card {
+      width: 100%;
+      min-height: 320px;
+      padding: 30px 24px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+    .slide-text-card h4 { font-size: 18px; margin-bottom: 12px; color: #60a5fa; }
+    .slide-text-card p { font-size: 14px; line-height: 1.6; color: #cbd5e1; white-space: pre-wrap; }
+
+    /* 슬라이더 좌우 버튼 & 인디케이터 */
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 50%;
+      border: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .slider-prev { left: 10px; }
+    .slider-next { right: 10px; }
+    .slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 0 6px;
+      background: #ffffff;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      transition: all 0.2s;
+    }
+    .dot.active {
+      width: 18px;
+      border-radius: 4px;
+      background: var(--primary);
+    }
+
+    .modal-body { padding: 14px 18px; overflow-y: auto; }
+    .modal-title { font-size: 16px; font-weight: 800; line-height: 1.4; margin-bottom: 6px; }
+    .modal-desc { font-size: 13.5px; color: #475569; line-height: 1.6; white-space: pre-wrap; }
+    
+    .modal-footer {
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+    .btn-close {
+      flex: 1;
+      padding: 11px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      border-radius: 9px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-submit {
+      flex: 2;
+      padding: 11px;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: 9px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    /* 즐겨찾기 안내 팝업 전용 */
+    .guide-card {
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+    }
+    .guide-icon { font-size: 36px; margin-bottom: 10px; }
+    .guide-title { font-size: 17px; font-weight: 800; margin-bottom: 10px; }
+    .guide-content { font-size: 13.5px; color: #475569; line-height: 1.6; margin-bottom: 18px; text-align: left; background: #f8fafc; padding: 12px; border-radius: 10px; }
+    .guide-content strong { color: var(--primary); }
 
     /* CPA Iframe 전용 */
     .iframe-container { width: 100%; height: 75vh; }
     .iframe-container iframe { width: 100%; height: 100%; border: 0; }
 
-    footer { text-align: center; padding: 24px 10px 10px; font-size: 11.5px; color: #94a3b8; line-height: 1.5; }
+    footer {
+      text-align: center;
+      padding: 30px 10px 10px;
+      font-size: 11.5px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- 헤더 -->
+    <!-- 리뉴얼 헤더 -->
     <header class="top-header">
-      <div class="logo-area">
-        <h1>올인원 파트너스 쇼핑</h1>
-      </div>
-      <button class="bookmark-btn" onclick="showBookmarkGuide()">⭐ 바로가기 추가</button>
+      <a class="brand-link" href="./" onclick="resetToHome(event)">
+        <div class="brand-icon">🛍️</div>
+        <div class="brand-text">
+          <h1>올인원 파트너스 쇼핑</h1>
+          <p>매일 업데이트되는 최저가 & 제휴 혜택</p>
+        </div>
+      </a>
+      <button class="btn-favorite" type="button" onclick="openBookmarkModal()">
+        ⭐ 바로가기/저장
+      </button>
     </header>
 
-    <!-- 7대 카테고리 필터 탭 -->
+    <!-- 7대 카테고리 탭 (가로 스크롤) -->
     <nav class="cat-nav" id="catNav">
       <button class="cat-chip active" onclick="filterCategory('전체', this)">전체</button>
       <button class="cat-chip" onclick="filterCategory('인기.핫템', this)">인기.핫템</button>
@@ -143,23 +450,31 @@
       <button class="cat-chip" onclick="filterCategory('기타', this)">기타</button>
     </nav>
 
-    <!-- 카테고리별 섹션이 렌더링되는 컨테이너 -->
+    <!-- 상품 카테고리별 섹션 컨테이너 -->
     <main id="mainContainer"></main>
 
     <!-- 법적 필수 고지문 -->
     <footer>
-      제휴 마케팅 활동의 일환으로 이에 따른 일정액의 수수료를 제공받을 수 있습니다.
+      공정거래위원회의 심사지침에 따라 추천·보증 등 제휴 마케팅 활동의 일환으로<br>
+      이에 따른 일정액의 수수료를 제공받을 수 있습니다.
     </footer>
   </div>
 
-  <!-- [모달 1] 카드뉴스 상세 모달 (이미지 클릭 시) -->
+  <!-- [모달 1] 카드뉴스 슬라이더 모달 (이미지 클릭 시) -->
   <div class="modal-overlay" id="cardModal">
     <div class="modal-content">
+      <div class="slider-container" id="sliderContainer">
+        <button class="slider-btn slider-prev" onclick="prevSlide()">&#10094;</button>
+        <button class="slider-btn slider-next" onclick="nextSlide()">&#10095;</button>
+        <div class="slider-track" id="sliderTrack"></div>
+      </div>
+      <div class="slider-dots" id="sliderDots"></div>
+
       <div class="modal-body">
-        <img id="mImg" class="modal-img" src="" alt="상세이미지">
         <h3 id="mTitle" class="modal-title"></h3>
         <p id="mDesc" class="modal-desc"></p>
       </div>
+
       <div class="modal-footer">
         <button class="btn-close" onclick="closeModal('cardModal')">닫기</button>
         <a id="mLink" href="#" target="_blank" class="btn-submit">바로보러가기 ></a>
@@ -167,7 +482,7 @@
     </div>
   </div>
 
-  <!-- [모달 2] CPA 신청폼 모달 (URL 복사 등록 시 임베드 폼) -->
+  <!-- [모달 2] CPA 신청폼 모달 -->
   <div class="modal-overlay" id="cpaModal">
     <div class="modal-content" style="max-width: 520px;">
       <div class="iframe-container">
@@ -180,13 +495,37 @@
     </div>
   </div>
 
+  <!-- [모달 3] 바로가기 / 즐겨찾기 안내 팝업 -->
+  <div class="modal-overlay" id="guideModal">
+    <div class="guide-card">
+      <div class="guide-icon">📲</div>
+      <h3 class="guide-title">홈 화면에 바로가기 추가</h3>
+      <div class="guide-content" id="guideText">
+        안내를 불러오는 중입니다...
+      </div>
+      <button class="btn-submit" style="width: 100%;" onclick="closeModal('guideModal')">확인했습니다</button>
+    </div>
+  </div>
+
   <script>
-    // ★ [패키지 1]에서 배포한 Apps Script 웹 앱 URL 입력 ★
-    const API_URL = "https://script.google.com/macros/s/AKfycbz8gWDYhGszPghQlvhd6FnV9o7EhkJLIixofqnvTsgsV69-z2mH9-pzSbqrW8GKqM-I/exec";
+    // ★ 본인의 구글 Apps Script 웹 앱 배포 URL ★
+    const API_URL = "https://script.google.com/macros/s/AKfycbz8gWDYhGszPghQlvhd6FnV9o7EhkJLIixofqnvTsgsV69-z2mH9-pzSbqrW8GKqM-I/exec"; 
+    // ※ 위 주소 자리에 질문자님의 실제 웹앱 URL(/exec)이 입력되어 있는지 확인하세요!
 
     const CATEGORIES = ["인기.핫템", "생활.일반", "먹거리.건강", "홈서비스", "여행.여가", "기타"];
     let rawData = [];
-    let expandedCats = {}; // 더보기 상태
+    let expandedCats = {};
+    let currentSlide = 0;
+    let totalSlides = 0;
+
+    // 메인 제목 클릭 시 새로고침/홈 복귀
+    function resetToHome(e) {
+      e.preventDefault();
+      document.querySelectorAll(".cat-chip").forEach(b => b.classList.remove("active"));
+      document.querySelector(".cat-chip").classList.add("active");
+      renderSections("전체");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
     async function loadData() {
       try {
@@ -194,7 +533,8 @@
         rawData = await res.json();
         renderSections("전체");
       } catch (err) {
-        document.getElementById("mainContainer").innerHTML = '<div style="text-align:center; padding:40px; color:#94a3b8;">데이터를 불러오는 중입니다...</div>';
+        document.getElementById("mainContainer").innerHTML = 
+          '<div style="text-align:center; padding:50px 0; color:#94a3b8;">데이터를 불러오는 중입니다. 잠시만 기다려주세요...</div>';
       }
     }
 
@@ -232,17 +572,18 @@
     }
 
     function createCardHTML(item) {
-      // 1. 영상 쇼츠 또는 대표이미지 처리
       let mediaHTML = "";
       if (item.video_url && item.video_url.includes("youtube")) {
         const embedUrl = getYoutubeEmbed(item.video_url);
         mediaHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
       } else {
-        const img = item.image_url || "https://via.placeholder.com/300x300?text=No+Image";
-        mediaHTML = `<img src="${img}" alt="${escapeHtml(item.title)}" onclick="openCardNews(${JSON.stringify(item).replace(/"/g, '&quot;')})">`;
+        const img = item.image_url ? item.image_url.split(",")[0].trim() : "https://via.placeholder.com/300x300?text=No+Image";
+        mediaHTML = `
+          <img src="${img}" alt="${escapeHtml(item.title)}" onclick="openCardNews(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+          <span class="card-zoom-hint" onclick="openCardNews(${JSON.stringify(item).replace(/"/g, '&quot;')})">🔍 카드뉴스</span>
+        `;
       }
 
-      // 2. 바로가기 동작 (CPA 폼인지 일반 링크인지 분기)
       const isCPA = item.item_type === "cpa";
       const actionAttr = isCPA 
         ? `onclick="openCpaForm('${item.url}')"`
@@ -263,20 +604,64 @@
 
     function toggleExpand(cat) {
       expandedCats[cat] = !expandedCats[cat];
-      renderSections(document.querySelector(".cat-chip.active").textContent);
+      const activeCat = document.querySelector(".cat-chip.active").textContent;
+      renderSections(activeCat);
     }
 
     function filterCategory(cat, btn) {
       document.querySelectorAll(".cat-chip").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       renderSections(cat);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    // 카드뉴스 팝업 (이미지 클릭 시)
+    /* ================= 카드뉴스 슬라이더 기능 ================= */
     function openCardNews(item) {
-      document.getElementById("mImg").src = item.image_url || "https://via.placeholder.com/300";
+      const track = document.getElementById("sliderTrack");
+      const dots = document.getElementById("sliderDots");
+      track.innerHTML = "";
+      dots.innerHTML = "";
+      currentSlide = 0;
+
+      // 이미지 URL이 쉼표(,)로 구분되어 있으면 다중 슬라이드로 파싱
+      let images = (item.image_url || "").split(",").map(s => s.trim()).filter(Boolean);
+      if (images.length === 0) images.push("https://via.placeholder.com/300x300?text=No+Image");
+
+      // 슬라이드 1장 이상 구성
+      images.forEach((imgUrl, idx) => {
+        const slide = document.createElement("div");
+        slide.className = "slide-item";
+        slide.innerHTML = `<img src="${imgUrl}" class="slide-img" alt="상세이미지">`;
+        track.appendChild(slide);
+      });
+
+      // 만약 이미지가 1장이면, 2페이지로 '핵심 혜택 요약 카드'를 자동 추가하여 카드뉴스 완성
+      if (images.length === 1) {
+        const textSlide = document.createElement("div");
+        textSlide.className = "slide-item";
+        textSlide.innerHTML = `
+          <div class="slide-text-card">
+            <h4>💡 핵심 혜택 안내</h4>
+            <p>${item.desc || "상세 특가 및 지원 혜택은 [바로보러가기]를 누르시면 공식 페이지에서 확인하실 수 있습니다."}</p>
+          </div>
+        `;
+        track.appendChild(textSlide);
+      }
+
+      totalSlides = track.children.length;
+
+      // 인디케이터 Dot 생성
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement("div");
+        dot.className = `dot ${i === 0 ? 'active' : ''}`;
+        dots.appendChild(dot);
+      }
+
+      updateSliderPosition();
+
+      // 설명글 및 바로가기 바인딩
       document.getElementById("mTitle").textContent = item.title;
-      document.getElementById("mDesc").textContent = item.desc || "상세 특가 및 지원 혜택은 바로보러가기를 통해 확인하실 수 있습니다.";
+      document.getElementById("mDesc").textContent = item.desc || "상세 특가 및 제휴 혜택을 놓치지 마세요!";
       
       const linkBtn = document.getElementById("mLink");
       if (item.item_type === "cpa") {
@@ -286,10 +671,85 @@
         linkBtn.href = item.url;
         linkBtn.onclick = null;
       }
+
       document.getElementById("cardModal").classList.add("open");
     }
 
-    // CPA 신청폼 임베드 팝업
+    function updateSliderPosition() {
+      const track = document.getElementById("sliderTrack");
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+      const dots = document.querySelectorAll(".slider-dots .dot");
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle("active", idx === currentSlide);
+      });
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSliderPosition();
+      } else {
+        currentSlide = totalSlides - 1;
+        updateSliderPosition();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSliderPosition();
+      } else {
+        currentSlide = 0;
+        updateSliderPosition();
+      }
+    }
+
+    // 모바일 터치 스와이프 지원
+    let startX = 0;
+    const trackEl = document.getElementById("sliderTrack");
+    trackEl.addEventListener("touchstart", (e) => { startX = e.touches[0].clientX; }, { passive: true });
+    trackEl.addEventListener("touchend", (e) => {
+      const diffX = startX - e.changedTouches[0].clientX;
+      if (diffX > 40) nextSlide();
+      else if (diffX < -40) prevSlide();
+    }, { passive: true });
+
+    /* ================= 즐겨찾기 안내 모달 ================= */
+    function openBookmarkModal() {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const guideEl = document.getElementById("guideText");
+
+      if (!isMobile) {
+        // PC 브라우저
+        guideEl.innerHTML = `
+          <strong>키보드의 단축키를 눌러주세요:</strong><br>
+          • 윈도우(크롬/엣지/웨일): <strong>Ctrl + D</strong><br>
+          • 맥(Mac Safari): <strong>Cmd + D</strong><br><br>
+          북마크에 등록해두시면 매일 바뀌는 특가를 가장 빠르게 확인하실 수 있습니다.
+        `;
+      } else if (isIOS) {
+        // 아이폰/사파리
+        guideEl.innerHTML = `
+          <strong>아이폰 홈 화면 앱으로 추가하기:</strong><br>
+          1. 사파리 화면 하단 중앙의 <strong>[공유 아이콘 (네모 위 화살표)]</strong>을 누릅니다.<br>
+          2. 메뉴를 아래로 내려 <strong>[홈 화면에 추가]</strong>를 누릅니다.<br>
+          3. 스마트폰 바탕화면에 전용 아이콘이 생성됩니다!
+        `;
+      } else {
+        // 안드로이드 갤럭시/크롬
+        guideEl.innerHTML = `
+          <strong>스마트폰 바탕화면에 추가하기:</strong><br>
+          1. 브라우저 우측 상단 <strong>점 3개(⋮)</strong>를 누릅니다.<br>
+          2. 메뉴에서 <strong>[홈 화면에 추가]</strong> 또는 <strong>[현재 페이지 추가]</strong>를 선택합니다.<br>
+          3. 앱처럼 언제든지 원클릭으로 접속하실 수 있습니다!
+        `;
+      }
+      document.getElementById("guideModal").classList.add("open");
+    }
+
+    /* ================= CPA 신청폼 모달 ================= */
     function openCpaForm(url) {
       document.getElementById("cpaIframe").src = url;
       document.getElementById("cpaDirectBtn").href = url;
@@ -298,7 +758,7 @@
 
     function closeModal(id) {
       document.getElementById(id).classList.remove("open");
-      if(id === 'cpaModal') document.getElementById("cpaIframe").src = "";
+      if (id === 'cpaModal') document.getElementById("cpaIframe").src = "";
     }
 
     function getYoutubeEmbed(url) {
@@ -307,10 +767,6 @@
         const u = new URL(url);
         return `https://www.youtube.com/embed/${u.searchParams.get("v") || u.pathname.replace('/', '')}`;
       } catch(e) { return url; }
-    }
-
-    function showBookmarkGuide() {
-      alert("스마트폰 브라우저 메뉴의 [홈 화면에 추가]를 누르시면 앱처럼 편하게 방문하실 수 있습니다!");
     }
 
     function escapeHtml(s) {

@@ -1,964 +1,323 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- 스마트폰 홈 화면 바로가기 아이콘 및 앱 설정 -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>올인원 파트너스 쇼핑</title>
+  
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081559.png">
   <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081559.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="스마트혜택">
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>쇼핑 · 렌탈 큐레이션 & 혜택 포털</title>
   <style>
     :root {
-      --bg: #f5f6f8;
-      --card: #ffffff;
-      --text: #18191c;
-      --muted: #6b7280;
-      --accent: #111827;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
       --primary: #2563eb;
-      --primary-soft: #eff6ff;
-      --hot: #dc2626;
-      --hot-soft: #fef2f2;
-      --green: #059669;
-      --green-soft: #ecfdf5;
-      --border: #e5e7eb;
+      --border: #e2e8f0;
+      --hot: #ef4444;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      padding-bottom: 56px;
-    }
-    .wrap {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 14px 16px;
+    body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif; background: var(--bg); color: var(--text); padding-bottom: 70px; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 12px 14px; }
+
+    /* 상단 헤더 & 바로가기 버튼 */
+    .top-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 16px; }
+    .logo-area h1 { font-size: 19px; font-weight: 900; letter-spacing: -0.5px; }
+    .bookmark-btn {
+      background: #fff; border: 1px solid var(--border); border-radius: 20px;
+      padding: 6px 12px; font-size: 12px; font-weight: 700; color: var(--primary);
+      cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
-    /* 상단: 쇼핑 플랫폼 탭 */
-    .top-bar {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 14px;
-      margin-bottom: 14px;
-      position: sticky;
-      top: 8px;
-      z-index: 30;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    /* 상단 7개 카테고리 탭 (가로 스크롤) */
+    .cat-nav {
+      position: sticky; top: 0; z-index: 40; background: rgba(248,250,252,0.95);
+      backdrop-filter: blur(8px); padding: 6px 0 10px; margin-bottom: 12px;
+      display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
     }
-    .top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      gap: 8px;
+    .cat-nav::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      white-space: nowrap; padding: 7px 15px; border-radius: 24px;
+      border: 1px solid var(--border); background: #fff; font-size: 13px;
+      font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s;
     }
-    .top-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--muted);
-    }
-    .jump-btn {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--green);
-      background: var(--green-soft);
-      border: 0;
-      padding: 4px 9px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
-    .platform-list {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-      scrollbar-width: none;
-    }
-    .platform-list::-webkit-scrollbar { display: none; }
-    .plat-btn {
-      flex: 0 0 auto;
-      border: 1px solid var(--border);
-      background: #fff;
-      color: var(--text);
-      padding: 7px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .plat-btn.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
+    .cat-chip.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+
+    /* 섹션 레이아웃 */
+    .section-wrap { margin-bottom: 32px; scroll-margin-top: 60px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 2px; }
+    .section-title { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+    .btn-more {
+      font-size: 12px; font-weight: 700; color: var(--muted); background: none;
+      border: 0; cursor: pointer; padding: 4px 6px;
     }
 
-    /* 혜택 요약 배너 */
-    .benefit-banner {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--green);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-    .benefit-banner-text {
-      font-size: 12.5px;
-      color: var(--text);
-      line-height: 1.45;
-    }
-    .benefit-banner-text strong {
-      color: var(--green);
-    }
-    .benefit-banner-btn {
-      flex-shrink: 0;
-      background: var(--accent);
-      color: #fff;
-      border: 0;
-      border-radius: 9px;
-      padding: 7px 11px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* 쇼츠 임베드 플레이어 */
-    .shorts-box {
-      display: none;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    }
-    .shorts-box.open { display: block; }
-    .shorts-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      gap: 8px;
-    }
-    .shorts-title {
-      font-size: 14px;
-      font-weight: 800;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .close-btn {
-      border: 1px solid var(--border);
-      background: #f9fafb;
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .iframe-wrap {
-      position: relative;
-      width: 100%;
-      max-width: 360px;
-      aspect-ratio: 9 / 16;
-      margin: 0 auto;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #000;
-    }
-    .iframe-wrap iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-
-    /* 공통 섹션 헤더 */
-    .section-block {
-      margin-bottom: 22px;
-    }
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 0 2px 10px;
-    }
-    .section-title {
-      font-size: 16px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .more-btn {
-      border: 1px solid var(--border);
-      background: #fff;
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 5px 11px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
-    .count-text {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    /* 인기템 그리드 (기본 4개 + 전체보기) */
-    .popular-grid {
+    /* 반응형 카드 그리드: PC 4단 / 모바일 2단 */
+    .card-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, 1fr); /* 모바일 2단 */
       gap: 10px;
     }
-    .pop-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 8px;
-    }
-    .pop-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 4px;
-    }
-    .badge-hot {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--hot);
-      background: var(--hot-soft);
-      padding: 2px 7px;
-      border-radius: 6px;
-    }
-    .badge-plat {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--primary);
-      background: var(--primary-soft);
-      padding: 2px 7px;
-      border-radius: 6px;
-    }
-    .pop-title {
-      font-size: 14px;
-      font-weight: 700;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .pop-price {
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--text);
-    }
-    .pop-actions {
-      display: flex;
-      gap: 6px;
-      margin-top: 2px;
-    }
-    .pop-actions .btn-link {
-      padding: 8px 8px;
-      font-size: 12px;
-    }
-    .pop-actions .btn-shorts {
-      padding: 8px 9px;
-      font-size: 12px;
+    @media (min-width: 768px) {
+      .card-grid {
+        grid-template-columns: repeat(4, 1fr); /* PC 4단 */
+        gap: 16px;
+      }
     }
 
-    /* 하단 최신순 상품 리스트 */
-    .item-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    /* 카드 스타일 (순서: 미디어 - 날짜 - 제목 - 번호 - 버튼) */
+    .card {
+      background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border);
+      overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
     }
-    .item-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-    }
-    .item-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-    .badge-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .date-text {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .item-title {
-      font-size: 15px;
-      font-weight: 700;
-    }
-    .item-price {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--text);
-    }
-    .item-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 2px;
-    }
-    .btn-link {
-      flex: 1;
-      text-align: center;
-      text-decoration: none;
-      background: var(--primary);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 10px 12px;
-      border-radius: 10px;
-    }
-    .btn-shorts {
-      border: 1px solid var(--border);
-      background: #fff;
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 700;
-      padding: 10px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    /* 하단 기초 질문 & 확정 혜택 확인 신청창 */
-    .support-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 24px;
-    }
-    .support-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-    .reward-rules {
-      background: #f9fafb;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 12px;
-      color: #374151;
-      margin-bottom: 14px;
-      line-height: 1.55;
-    }
-    .reward-rules ul {
-      padding-left: 16px;
-    }
-    .form-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .form-label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: #374151;
-      margin-bottom: 4px;
-    }
-    .form-input, .form-select, .form-textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 13.5px;
-      font-family: inherit;
-      background: #fff;
-    }
-    .form-textarea {
-      min-height: 72px;
-      resize: vertical;
-    }
-    .privacy-note {
-      font-size: 11.5px;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-    .submit-btn {
-      width: 100%;
-      background: var(--green);
-      color: #fff;
-      border: 0;
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 14px;
-      font-weight: 800;
+    .media-box {
+      width: 100%; aspect-ratio: 1 / 1; background: #e2e8f0; position: relative; overflow: hidden;
       cursor: pointer;
     }
-    .submit-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .media-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .media-box iframe { width: 100%; height: 100%; border: 0; }
+    
+    .card-body { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; }
+    .card-date { font-size: 11px; color: #94a3b8; font-weight: 500; margin-bottom: 3px; }
+    .card-title {
+      font-size: 13.5px; font-weight: 700; line-height: 1.35; margin-bottom: 6px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+      min-height: 36px;
     }
-    .form-status {
-      font-size: 12.5px;
-      font-weight: 700;
-      text-align: center;
-      margin-top: 4px;
+    .card-id { font-size: 11px; color: #cbd5e1; font-weight: 600; margin-bottom: 10px; margin-top: auto; }
+    
+    .btn-action {
+      display: block; width: 100%; padding: 9px 0; background: var(--primary);
+      color: #fff; text-align: center; font-size: 13px; font-weight: 700;
+      border-radius: 8px; text-decoration: none; border: 0; cursor: pointer;
     }
 
-    .empty-msg {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      text-align: center;
-      font-size: 13px;
-      color: var(--muted);
+    /* 카드뉴스 모달 & CPA 모달 공통 */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      z-index: 100; align-items: center; justify-content: center; padding: 16px;
     }
-    .notice {
-      margin-top: 20px;
-      font-size: 12px;
-      color: var(--muted);
-      text-align: center;
-      line-height: 1.6;
+    .modal-overlay.open { display: flex; }
+    .modal-content {
+      background: #fff; width: 100%; max-width: 440px; border-radius: 16px;
+      overflow: hidden; max-height: 90vh; display: flex; flex-direction: column;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); animation: popUp 0.2s ease-out;
     }
+    @keyframes popUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-body { padding: 16px; overflow-y: auto; }
+    .modal-img { width: 100%; max-height: 280px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; }
+    .modal-title { font-size: 16px; font-weight: 800; line-height: 1.4; margin-bottom: 8px; }
+    .modal-desc { font-size: 13.5px; color: #334155; line-height: 1.6; white-space: pre-wrap; margin-bottom: 16px; }
+    .modal-footer { padding: 12px 16px; background: #f8fafc; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+    .btn-close { flex: 1; padding: 11px; border: 1px solid var(--border); background: #fff; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    .btn-submit { flex: 2; padding: 11px; background: var(--primary); color: #fff; border-radius: 8px; font-weight: 700; text-align: center; text-decoration: none; border: 0; cursor: pointer; }
+
+    /* CPA Iframe 전용 */
+    .iframe-container { width: 100%; height: 75vh; }
+    .iframe-container iframe { width: 100%; height: 100%; border: 0; }
+
+    footer { text-align: center; padding: 24px 10px 10px; font-size: 11.5px; color: #94a3b8; line-height: 1.5; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- 상단: 쇼핑 플랫폼명 필터 -->
-    <header class="top-bar">
-      <div class="top-row">
-        <div class="top-label">쇼핑 · 렌탈 플랫폼 선택</div>
-        <button class="jump-btn" type="button" onclick="scrollToSupport()">확정혜택·문의접수 ↓</button>
+    <!-- 헤더 -->
+    <header class="top-header">
+      <div class="logo-area">
+        <h1>올인원 파트너스 쇼핑</h1>
       </div>
-      <div class="platform-list" id="platformList"></div>
+      <button class="bookmark-btn" onclick="showBookmarkGuide()">⭐ 바로가기 추가</button>
     </header>
 
-    <!-- 확정 수익 기반 혜택 안내 배너 -->
-    <div class="benefit-banner">
-      <div class="benefit-banner-text">
-        <strong>확정 구매·렌탈 혜택 안내</strong> · 제휴 수익이 최종 확정된 건에 한해 네이버페이 포인트·기프티콘·리워드 이벤트를 안내해 드립니다.
+    <!-- 7대 카테고리 필터 탭 -->
+    <nav class="cat-nav" id="catNav">
+      <button class="cat-chip active" onclick="filterCategory('전체', this)">전체</button>
+      <button class="cat-chip" onclick="filterCategory('인기.핫템', this)">인기.핫템</button>
+      <button class="cat-chip" onclick="filterCategory('생활.일반', this)">생활.일반</button>
+      <button class="cat-chip" onclick="filterCategory('먹거리.건강', this)">먹거리.건강</button>
+      <button class="cat-chip" onclick="filterCategory('홈서비스', this)">홈서비스</button>
+      <button class="cat-chip" onclick="filterCategory('여행.여가', this)">여행.여가</button>
+      <button class="cat-chip" onclick="filterCategory('기타', this)">기타</button>
+    </nav>
+
+    <!-- 카테고리별 섹션이 렌더링되는 컨테이너 -->
+    <main id="mainContainer"></main>
+
+    <!-- 법적 필수 고지문 -->
+    <footer>
+      제휴 마케팅 활동의 일환으로 이에 따른 일정액의 수수료를 제공받을 수 있습니다.
+    </footer>
+  </div>
+
+  <!-- [모달 1] 카드뉴스 상세 모달 (이미지 클릭 시) -->
+  <div class="modal-overlay" id="cardModal">
+    <div class="modal-content">
+      <div class="modal-body">
+        <img id="mImg" class="modal-img" src="" alt="상세이미지">
+        <h3 id="mTitle" class="modal-title"></h3>
+        <p id="mDesc" class="modal-desc"></p>
       </div>
-      <button class="benefit-banner-btn" type="button" onclick="scrollToSupport()">확인 신청</button>
+      <div class="modal-footer">
+        <button class="btn-close" onclick="closeModal('cardModal')">닫기</button>
+        <a id="mLink" href="#" target="_blank" class="btn-submit">바로보러가기 ></a>
+      </div>
     </div>
+  </div>
 
-    <!-- 내가 만든 쇼츠 임베드 플레이어 -->
-    <section class="shorts-box" id="shortsBox">
-      <div class="shorts-header">
-        <div class="shorts-title" id="shortsTitle">쇼츠 재생</div>
-        <button class="close-btn" type="button" onclick="closeShorts()">닫기</button>
+  <!-- [모달 2] CPA 신청폼 모달 (URL 복사 등록 시 임베드 폼) -->
+  <div class="modal-overlay" id="cpaModal">
+    <div class="modal-content" style="max-width: 520px;">
+      <div class="iframe-container">
+        <iframe id="cpaIframe" src=""></iframe>
       </div>
-      <div class="iframe-wrap">
-        <iframe
-          id="shortsIframe"
-          src=""
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
+      <div class="modal-footer">
+        <button class="btn-close" onclick="closeModal('cpaModal')">닫기</button>
+        <a id="cpaDirectBtn" href="#" target="_blank" class="btn-submit">새 창으로 열기</a>
       </div>
-    </section>
-
-    <!-- 중단: 인기템 (기본 4개 노출 + 전체보기 토글) -->
-    <section class="section-block" id="popularSection">
-      <div class="section-head">
-        <h2 class="section-title">🔥 인기템</h2>
-        <button class="more-btn" type="button" id="popularToggleBtn" onclick="togglePopularAll()">전체보기</button>
-      </div>
-      <div class="popular-grid" id="popularGrid"></div>
-    </section>
-
-    <!-- 하단: 사이트별 상품 최신순 리스트 -->
-    <main class="section-block">
-      <div class="section-head">
-        <h1 class="section-title">최신순 상품 리스트</h1>
-        <span class="count-text" id="countText"></span>
-      </div>
-      <div class="item-list" id="itemList"></div>
-    </main>
-
-    <!-- 최하단: 기초 질문창 & 확정 혜택 확인 신청 -->
-    <section class="support-card" id="supportSection">
-      <h2 class="support-title">💬 기초 질문 & 확정 혜택 확인 신청</h2>
-      <div class="reward-rules">
-        <ul>
-          <li><strong>혜택 기준:</strong> 본 페이지 링크를 통해 구매·설치 완료 후 <strong>제휴사 정산이 최종 확정된 건</strong>에 한해 네이버페이 포인트, 기프티콘 또는 리워드 이벤트 혜택을 제공합니다. (취소·반품·미설치·제휴사 정책상 제외 건은 대상에서 제외)</li>
-          <li><strong>최소 정보 수집 원칙:</strong> 주민등록번호·계좌 비밀번호 등 민감정보는 절대 받지 않으며, 주문/신청 확인용 최소 정보와 혜택 발송 연락처만 입력해 주세요.</li>
-        </ul>
-      </div>
-
-      <form class="form-grid" id="inquiryForm" onsubmit="submitInquiry(event)">
-        <div>
-          <label class="form-label" for="inqType">접수 구분</label>
-          <select class="form-select" id="inqType">
-            <option value="구매·렌탈 확정 혜택 확인">구매·렌탈 확정 혜택 확인 (네이버페이/기프티콘 등)</option>
-            <option value="쇼핑·렌탈 기초 질문">쇼핑·렌탈 기초 질문 / 상담</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="form-label" for="inqTarget">이용 플랫폼 및 상품·렌탈명 *</label>
-          <input
-            class="form-input"
-            id="inqTarget"
-            type="text"
-            placeholder="예: 쿠팡 무선 가습기 / 정수기 렌탈 문의"
-            required
-          />
-        </div>
-
-        <div>
-          <label class="form-label" for="inqVerify">확인 정보 또는 질문 내용</label>
-          <textarea
-            class="form-textarea"
-            id="inqVerify"
-            placeholder="예: 11/23 오전 10시경 결제 완료(주문번호 끝 4자리 1234) 또는 궁금한 내용을 적어주세요."
-          ></textarea>
-        </div>
-
-        <div>
-          <label class="form-label" for="inqContact">혜택·답변 받을 연락처 (휴대폰 또는 이메일) *</label>
-          <input
-            class="form-input"
-            id="inqContact"
-            type="text"
-            placeholder="예: 010-0000-0000 또는 example@naver.com"
-            required
-          />
-        </div>
-
-        <p class="privacy-note">
-          ※ 입력하신 연락처 및 확인 정보는 문의 답변과 확정 혜택(포인트·기프티콘) 발송 확인 목적으로만 활용됩니다.
-        </p>
-
-        <button class="submit-btn" id="submitBtn" type="submit">접수하기</button>
-        <div class="form-status" id="formStatus"></div>
-      </form>
-    </section>
-
-    <p class="notice">
-      제휴 마케팅 활동의 일환으로 이에 따른 일정액의 수수료를 제공받을 수 있습니다.<br />
-      각 제휴 플랫폼의 운영 정책에 따라 리워드 대상 및 지급 방식이 일부 제한될 수 있습니다.
-    </p>
+    </div>
   </div>
 
   <script>
-    // 1. 구글 스프레드시트 '웹에 게시(.csv)' 주소를 아래에 붙여넣으세요.
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOWlSyJWstb0Yj9dKRxCQN6JfIDFI2SPGJv1SZdM4SsfX09rVtAsx771ohsWF4eN-IM_o46wUeN_IP/pub?gid=0&single=true&output=csv";
+    // ★ [패키지 1]에서 배포한 Apps Script 웹 앱 URL 입력 ★
+    const API_URL = "https://script.google.com/macros/s/AKfycbz8gWDYhGszPghQlvhd6FnV9o7EhkJLIixofqnvTsgsV69-z2mH9-pzSbqrW8GKqM-I/exec";
 
-    // 2. Apps Script 웹 앱 배포 URL (하단 기초 질문/확정 혜택 접수 저장용)
-    const INQUIRY_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbw-0fZ23OGwjr5aAH8Qsy1OO1aSaWJ_30EI0NI5ZN773jcCfEsIzqXSpa3m9_PSJzeT/exec";
+    const CATEGORIES = ["인기.핫템", "생활.일반", "먹거리.건강", "홈서비스", "여행.여가", "기타"];
+    let rawData = [];
+    let expandedCats = {}; // 더보기 상태
 
-    // 메인에 기본으로 보여줄 인기템 개수
-    const POPULAR_PREVIEW_COUNT = 4;
-
-    const FALLBACK_ITEMS = [
-      {
-        section: "인기템",
-        platform: "쿠팡",
-        title: "무선 미니 가습기 300ml 무드등 겸용",
-        price: "19,900원",
-        url: "https://www.coupang.com",
-        registered_at: "2026-11-23 10:30",
-        shorts_url: "https://www.youtube.com/shorts/dQw4w9WgXcQ"
-      },
-      {
-        section: "인기템",
-        platform: "네이버쇼핑",
-        title: "스텐 진공 텀블러 500ml 보온보냉",
-        price: "14,500원",
-        url: "https://shopping.naver.com",
-        registered_at: "2026-11-23 10:15",
-        shorts_url: ""
-      },
-      {
-        section: "인기템",
-        platform: "토스쇼핑",
-        title: "원터치 자동 3단 암막 우산",
-        price: "9,900원",
-        url: "https://toss.im",
-        registered_at: "2026-11-23 10:05",
-        shorts_url: ""
-      },
-      {
-        section: "인기템",
-        platform: "카카오톡딜",
-        title: "고당도 제주 노지 감귤 3kg",
-        price: "12,900원",
-        url: "https://store.kakao.com",
-        registered_at: "2026-11-23 09:50",
-        shorts_url: ""
-      },
-      {
-        section: "인기템",
-        platform: "가전렌탈",
-        title: "직수형 냉온정수기 월 렌탈 프로모션",
-        price: "월 24,900원~",
-        url: "https://www.naver.com",
-        registered_at: "2026-11-23 09:30",
-        shorts_url: ""
-      },
-      {
-        section: "최신순",
-        platform: "쿠팡",
-        title: "주방 실리콘 배수구 거름망 3개입",
-        price: "7,400원",
-        url: "https://www.coupang.com",
-        registered_at: "2026-11-23 10:40",
-        shorts_url: ""
-      }
-    ];
-
-    let allItems = [];
-    let selectedPlatform = "전체";
-    let showAllPopular = false;
-
-    function scrollToSupport() {
-      document.getElementById("supportSection").scrollIntoView({ behavior: "smooth" });
-    }
-
-    function parseCSV(csvText) {
-      const lines = csvText.trim().split(/\r?\n/);
-      if (lines.length < 2) return [];
-      const headers = splitCSVLine(lines[0]).map(h => h.trim());
-      return lines.slice(1).map((line, idx) => {
-        const cols = splitCSVLine(line);
-        const row = {};
-        headers.forEach((h, i) => {
-          row[h] = (cols[i] || "").trim();
-        });
-        row._order = idx;
-        return row;
-      }).filter(r => r.title && r.url && r.section !== "숨김");
-    }
-
-    function splitCSVLine(line) {
-      const result = [];
-      let current = "";
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (ch === '"') {
-          if (inQuotes && line[i + 1] === '"') {
-            current += '"';
-            i++;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (ch === "," && !inQuotes) {
-          result.push(current);
-          current = "";
-        } else {
-          current += ch;
-        }
-      }
-      result.push(current);
-      return result;
-    }
-
-    function sortLatest(items) {
-      return [...items].sort((a, b) => {
-        const timeA = Date.parse((a.registered_at || "").replace(" ", "T"));
-        const timeB = Date.parse((b.registered_at || "").replace(" ", "T"));
-        if (!isNaN(timeA) && !isNaN(timeB) && timeA !== timeB) {
-          return timeB - timeA;
-        }
-        return (b._order || 0) - (a._order || 0);
-      });
-    }
-
-    function getFilteredByPlatform(items) {
-      if (selectedPlatform === "전체") return items;
-      return items.filter(item => item.platform === selectedPlatform);
-    }
-
-    function renderPlatforms() {
-      const platforms = ["전체", ...new Set(allItems.map(i => i.platform).filter(Boolean))];
-      const container = document.getElementById("platformList");
-      container.innerHTML = "";
-      platforms.forEach(plat => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "plat-btn" + (plat === selectedPlatform ? " active" : "");
-        btn.textContent = plat;
-        btn.onclick = () => {
-          selectedPlatform = plat;
-          showAllPopular = false;
-          renderPlatforms();
-          renderPopular();
-          renderLatestList();
-        };
-        container.appendChild(btn);
-      });
-    }
-
-    function togglePopularAll() {
-      showAllPopular = !showAllPopular;
-      renderPopular();
-    }
-
-    function renderPopular() {
-      const sectionEl = document.getElementById("popularSection");
-      const gridEl = document.getElementById("popularGrid");
-      const toggleBtn = document.getElementById("popularToggleBtn");
-
-      const popularAll = getFilteredByPlatform(
-        allItems.filter(item => (item.section || "").includes("인기"))
-      );
-
-      if (popularAll.length === 0) {
-        sectionEl.style.display = "none";
-        return;
-      }
-      sectionEl.style.display = "block";
-
-      if (popularAll.length <= POPULAR_PREVIEW_COUNT) {
-        toggleBtn.style.display = "none";
-      } else {
-        toggleBtn.style.display = "inline-block";
-        toggleBtn.textContent = showAllPopular
-          ? "접기"
-          : `전체보기 (${popularAll.length})`;
-      }
-
-      const visibleItems = showAllPopular
-        ? popularAll
-        : popularAll.slice(0, POPULAR_PREVIEW_COUNT);
-
-      gridEl.innerHTML = "";
-      visibleItems.forEach(item => {
-        const card = document.createElement("article");
-        card.className = "pop-card";
-
-        const top = document.createElement("div");
-        top.className = "pop-top";
-        top.innerHTML = `
-          <span class="badge-plat">${escapeHtml(item.platform || "기타")}</span>
-          <span class="badge-hot">인기</span>
-        `;
-
-        const title = document.createElement("div");
-        title.className = "pop-title";
-        title.textContent = item.title;
-
-        const price = document.createElement("div");
-        price.className = "pop-price";
-        price.textContent = item.price || "";
-
-        const actions = document.createElement("div");
-        actions.className = "pop-actions";
-
-        const linkA = document.createElement("a");
-        linkA.className = "btn-link";
-        linkA.href = item.url;
-        linkA.target = "_blank";
-        linkA.rel = "noopener noreferrer";
-        linkA.textContent = "보러가기";
-        actions.appendChild(linkA);
-
-        if (item.shorts_url) {
-          const shortsBtn = document.createElement("button");
-          shortsBtn.type = "button";
-          shortsBtn.className = "btn-shorts";
-          shortsBtn.textContent = "쇼츠";
-          shortsBtn.onclick = () => openShorts(item.title, item.shorts_url);
-          actions.appendChild(shortsBtn);
-        }
-
-        card.appendChild(top);
-        card.appendChild(title);
-        if (item.price) card.appendChild(price);
-        card.appendChild(actions);
-        gridEl.appendChild(card);
-      });
-    }
-
-    function renderLatestList() {
-      const filtered = getFilteredByPlatform(allItems);
-      const listEl = document.getElementById("itemList");
-      const countEl = document.getElementById("countText");
-      countEl.textContent = `총 ${filtered.length}개`;
-      listEl.innerHTML = "";
-
-      if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="empty-msg">등록된 상품이 없습니다.</div>`;
-        return;
-      }
-
-      filtered.forEach(item => {
-        const card = document.createElement("article");
-        card.className = "item-card";
-
-        const isPopular = (item.section || "").includes("인기");
-        const top = document.createElement("div");
-        top.className = "item-top";
-        top.innerHTML = `
-          <div class="badge-group">
-            <span class="badge-plat">${escapeHtml(item.platform || "기타")}</span>
-            ${isPopular ? '<span class="badge-hot">인기템</span>' : ""}
-          </div>
-          <span class="date-text">${escapeHtml(item.registered_at || "")}</span>
-        `;
-
-        const title = document.createElement("div");
-        title.className = "item-title";
-        title.textContent = item.title;
-
-        const price = document.createElement("div");
-        price.className = "item-price";
-        price.textContent = item.price || "";
-
-        const actions = document.createElement("div");
-        actions.className = "item-actions";
-
-        const linkA = document.createElement("a");
-        linkA.className = "btn-link";
-        linkA.href = item.url;
-        linkA.target = "_blank";
-        linkA.rel = "noopener noreferrer";
-        linkA.textContent = "쇼핑몰 · 신청 바로가기";
-        actions.appendChild(linkA);
-
-        if (item.shorts_url) {
-          const shortsBtn = document.createElement("button");
-          shortsBtn.type = "button";
-          shortsBtn.className = "btn-shorts";
-          shortsBtn.textContent = "쇼츠 보기";
-          shortsBtn.onclick = () => openShorts(item.title, item.shorts_url);
-          actions.appendChild(shortsBtn);
-        }
-
-        card.appendChild(top);
-        card.appendChild(title);
-        if (item.price) card.appendChild(price);
-        card.appendChild(actions);
-        listEl.appendChild(card);
-      });
-    }
-
-    function extractYouTubeEmbedUrl(rawUrl) {
-      if (!rawUrl) return "";
+    async function loadData() {
       try {
-        const u = new URL(rawUrl);
-        if (u.pathname.includes("/shorts/")) {
-          const id = u.pathname.split("/shorts/")[1].split("/")[0];
-          return `https://www.youtube.com/embed/${id}`;
-        }
-        if (u.hostname.includes("youtu.be")) {
-          const id = u.pathname.replace("/", "");
-          return `https://www.youtube.com/embed/${id}`;
-        }
-        const v = u.searchParams.get("v");
-        if (v) return `https://www.youtube.com/embed/${v}`;
-      } catch (e) {}
-      return "";
-    }
-
-    function openShorts(title, rawUrl) {
-      const embedUrl = extractYouTubeEmbedUrl(rawUrl);
-      if (!embedUrl) {
-        window.open(rawUrl, "_blank", "noopener,noreferrer");
-        return;
-      }
-      document.getElementById("shortsTitle").textContent = title + " · 쇼츠";
-      document.getElementById("shortsIframe").src = embedUrl;
-      const box = document.getElementById("shortsBox");
-      box.classList.add("open");
-      box.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-
-    function closeShorts() {
-      document.getElementById("shortsIframe").src = "";
-      document.getElementById("shortsBox").classList.remove("open");
-    }
-
-    async function submitInquiry(e) {
-      e.preventDefault();
-      const btn = document.getElementById("submitBtn");
-      const statusEl = document.getElementById("formStatus");
-
-      const payload = {
-        type: document.getElementById("inqType").value,
-        target: document.getElementById("inqTarget").value.trim(),
-        verifyInfo: document.getElementById("inqVerify").value.trim(),
-        contact: document.getElementById("inqContact").value.trim()
-      };
-
-      if (!INQUIRY_WEBHOOK_URL) {
-        statusEl.style.color = "#059669";
-        statusEl.textContent = "테스트 모드: INQUIRY_WEBHOOK_URL을 연결하면 구글 시트 '문의접수' 탭에 자동 저장됩니다.";
-        return;
-      }
-
-      btn.disabled = true;
-      statusEl.style.color = "#6b7280";
-      statusEl.textContent = "접수 중입니다...";
-
-      try {
-        await fetch(INQUIRY_WEBHOOK_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-        document.getElementById("inquiryForm").reset();
-        statusEl.style.color = "#059669";
-        statusEl.textContent = "정상 접수되었습니다! 확정 내역 확인 후 기재해주신 연락처로 안내해 드립니다.";
+        const res = await fetch(API_URL);
+        rawData = await res.json();
+        renderSections("전체");
       } catch (err) {
-        statusEl.style.color = "#dc2626";
-        statusEl.textContent = "전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
-      } finally {
-        btn.disabled = false;
+        document.getElementById("mainContainer").innerHTML = '<div style="text-align:center; padding:40px; color:#94a3b8;">데이터를 불러오는 중입니다...</div>';
       }
     }
 
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+    function renderSections(targetCat) {
+      const container = document.getElementById("mainContainer");
+      container.innerHTML = "";
+
+      const catsToRender = targetCat === "전체" ? CATEGORIES : [targetCat];
+
+      catsToRender.forEach(cat => {
+        const items = rawData.filter(i => (i.category || "").trim() === cat);
+        if (items.length === 0) return;
+
+        const isExpanded = expandedCats[cat] || false;
+        const visibleItems = isExpanded ? items : items.slice(0, 4);
+
+        const sec = document.createElement("section");
+        sec.className = "section-wrap";
+        sec.id = "sec-" + cat;
+
+        sec.innerHTML = `
+          <div class="section-header">
+            <h2 class="section-title">● ${cat}</h2>
+            ${items.length > 4 ? `
+              <button class="btn-more" onclick="toggleExpand('${cat}')">
+                ${isExpanded ? '접기' : `+ 전체보기 (${items.length})`}
+              </button>` : ''}
+          </div>
+          <div class="card-grid">
+            ${visibleItems.map(item => createCardHTML(item)).join('')}
+          </div>
+        `;
+        container.appendChild(sec);
+      });
     }
 
-    async function init() {
-      if (SHEET_CSV_URL) {
-        try {
-          const res = await fetch(SHEET_CSV_URL);
-          const text = await res.text();
-          const parsed = parseCSV(text);
-          allItems = sortLatest(parsed.length ? parsed : FALLBACK_ITEMS);
-        } catch (err) {
-          allItems = sortLatest(FALLBACK_ITEMS);
-        }
+    function createCardHTML(item) {
+      // 1. 영상 쇼츠 또는 대표이미지 처리
+      let mediaHTML = "";
+      if (item.video_url && item.video_url.includes("youtube")) {
+        const embedUrl = getYoutubeEmbed(item.video_url);
+        mediaHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
       } else {
-        allItems = sortLatest(FALLBACK_ITEMS);
+        const img = item.image_url || "https://via.placeholder.com/300x300?text=No+Image";
+        mediaHTML = `<img src="${img}" alt="${escapeHtml(item.title)}" onclick="openCardNews(${JSON.stringify(item).replace(/"/g, '&quot;')})">`;
       }
-      renderPlatforms();
-      renderPopular();
-      renderLatestList();
+
+      // 2. 바로가기 동작 (CPA 폼인지 일반 링크인지 분기)
+      const isCPA = item.item_type === "cpa";
+      const actionAttr = isCPA 
+        ? `onclick="openCpaForm('${item.url}')"`
+        : `href="${item.url}" target="_blank"`;
+
+      return `
+        <article class="card">
+          <div class="media-box">${mediaHTML}</div>
+          <div class="card-body">
+            <span class="card-date">${item.registered_at || ""}</span>
+            <h3 class="card-title">${escapeHtml(item.title)}</h3>
+            <span class="card-id">${item.product_id || ""}</span>
+            <a class="btn-action" ${actionAttr}>바로가기 ></a>
+          </div>
+        </article>
+      `;
     }
 
-    init();
+    function toggleExpand(cat) {
+      expandedCats[cat] = !expandedCats[cat];
+      renderSections(document.querySelector(".cat-chip.active").textContent);
+    }
+
+    function filterCategory(cat, btn) {
+      document.querySelectorAll(".cat-chip").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderSections(cat);
+    }
+
+    // 카드뉴스 팝업 (이미지 클릭 시)
+    function openCardNews(item) {
+      document.getElementById("mImg").src = item.image_url || "https://via.placeholder.com/300";
+      document.getElementById("mTitle").textContent = item.title;
+      document.getElementById("mDesc").textContent = item.desc || "상세 특가 및 지원 혜택은 바로보러가기를 통해 확인하실 수 있습니다.";
+      
+      const linkBtn = document.getElementById("mLink");
+      if (item.item_type === "cpa") {
+        linkBtn.href = "#";
+        linkBtn.onclick = (e) => { e.preventDefault(); closeModal('cardModal'); openCpaForm(item.url); };
+      } else {
+        linkBtn.href = item.url;
+        linkBtn.onclick = null;
+      }
+      document.getElementById("cardModal").classList.add("open");
+    }
+
+    // CPA 신청폼 임베드 팝업
+    function openCpaForm(url) {
+      document.getElementById("cpaIframe").src = url;
+      document.getElementById("cpaDirectBtn").href = url;
+      document.getElementById("cpaModal").classList.add("open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+      if(id === 'cpaModal') document.getElementById("cpaIframe").src = "";
+    }
+
+    function getYoutubeEmbed(url) {
+      try {
+        if (url.includes("/shorts/")) return `https://www.youtube.com/embed/${url.split("/shorts/")[1].split("?")[0]}`;
+        const u = new URL(url);
+        return `https://www.youtube.com/embed/${u.searchParams.get("v") || u.pathname.replace('/', '')}`;
+      } catch(e) { return url; }
+    }
+
+    function showBookmarkGuide() {
+      alert("스마트폰 브라우저 메뉴의 [홈 화면에 추가]를 누르시면 앱처럼 편하게 방문하실 수 있습니다!");
+    }
+
+    function escapeHtml(s) {
+      return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    loadData();
   </script>
 </body>
 </html>
